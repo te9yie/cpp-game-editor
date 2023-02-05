@@ -1,3 +1,5 @@
+#include "framework/app.h"
+
 int main(int /*argc*/, char* /*argv*/[]) {
 #if defined(_MSC_VER)
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -17,6 +19,8 @@ int main(int /*argc*/, char* /*argv*/[]) {
   ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
   ImGui_ImplSDLRenderer_Init(renderer);
 
+  t9::framework::Context ctx;
+
   bool loop = true;
   while (loop) {
     {
@@ -33,12 +37,21 @@ int main(int /*argc*/, char* /*argv*/[]) {
         }
       }
     }
+    if (ctx.on_quit) {
+      loop = false;
+    }
 
     ImGui_ImplSDLRenderer_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
+    t9::framework::begin_frame(&ctx);
+    t9::framework::run(&ctx);
+    t9::framework::end_frame(&ctx);
+
+    if (ctx.show_demo) {
+      ImGui::ShowDemoWindow(&ctx.show_demo);
+    }
 
     ImGui::Render();
 
